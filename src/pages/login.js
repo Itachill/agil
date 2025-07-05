@@ -6,18 +6,19 @@ function Login() {
   const [usuario, setUsuario] = useState("");
   const [clave, setClave] = useState("");
   const [error, setError] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
   const navigate = useNavigate();
   const { login, usuarioLogeado } = useContext(AuthContext);
 
-  // 👉 Si ya está logeado, redirigir al home
+  // Redirigir si ya está logeado
   useEffect(() => {
     if (usuarioLogeado) {
       navigate("/");
     }
   }, [usuarioLogeado, navigate]);
 
-  // 👇 Agrega el admin por defecto si no existe
+  // Crear admin por defecto
   useEffect(() => {
     const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
     const existeAdmin = usuarios.some(u => u.usuario === "admin");
@@ -30,19 +31,26 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
     const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-
     const encontrado = usuarios.find(
       (u) => u.usuario === usuario && u.clave === clave
     );
 
     if (encontrado) {
-      login(encontrado); // ✅ usamos el contexto
-      navigate("/"); // ✅ redirige al Home
+      login(encontrado);
+      navigate("/");
     } else {
       setError("Usuario o contraseña incorrectos");
     }
+  };
+
+  const restablecerAdmin = () => {
+    localStorage.setItem(
+      "usuarios",
+      JSON.stringify([{ usuario: "admin", clave: "1234", rol: "admin" }])
+    );
+    setMensaje("✅ Usuario admin (admin / 1234) restablecido");
+    setError("");
   };
 
   return (
@@ -72,6 +80,12 @@ function Login() {
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {mensaje && <p style={{ color: "green" }}>{mensaje}</p>}
+
+      <hr />
+      <button onClick={restablecerAdmin} style={{ marginTop: "10px" }}>
+        🔄 Restablecer Usuario Admin
+      </button>
     </div>
   );
 }

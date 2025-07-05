@@ -1,7 +1,6 @@
-// src/App.js
 import React, { useContext } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import Home from "./pages/Home"; // ← NUEVO
+import Home from "./pages/Home";
 import Inventario from "./pages/Inventario";
 import Proveedores from "./pages/Proveedores";
 import Login from "./pages/login";
@@ -9,6 +8,7 @@ import CrearUsuario from "./pages/CrearUsuario";
 import VerUsuarios from "./pages/VerUsuarios";
 import RutaProtegida from "./components/RutaProtegida";
 import { AuthContext } from "./context/AuthContext";
+import './App.css'; // 🟦 Importa tus estilos
 
 function App() {
   const { usuarioLogeado, logout } = useContext(AuthContext);
@@ -20,53 +20,52 @@ function App() {
   };
 
   return (
-    <div>
-      {/* 🔵 Navegación solo si hay usuario logeado */}
+    <div className="App">
       {usuarioLogeado && (
-        <nav style={{ marginBottom: "20px" }}>
-          <Link to="/" style={{ marginRight: "10px" }}>Inicio</Link>
-          <Link to="/inventario" style={{ marginRight: "10px" }}>Inventario</Link>
-          <Link to="/proveedores" style={{ marginRight: "10px" }}>Proveedores</Link>
+        <div className="sidebar">
+          <h2>INVENTARIO</h2>
+          <Link to="/" className="nav-link">🏠 Inicio</Link>
+          <Link to="/inventario" className="nav-link">📦 Inventario</Link>
+          <Link to="/proveedores" className="nav-link">🚚 Proveedores</Link>
 
-          {/* 🔒 Opciones exclusivas del admin */}
           {usuarioLogeado.rol === "admin" && (
             <>
-              <Link to="/crear-usuario" style={{ marginRight: "10px" }}>Crear Usuario</Link>
-              <Link to="/ver-usuarios" style={{ marginRight: "10px" }}>Ver Usuarios</Link>
+              <Link to="/crear-usuario" className="nav-link">👤 Crear Usuario</Link>
+              <Link to="/ver-usuarios" className="nav-link">📋 Ver Usuarios</Link>
             </>
           )}
 
-          {/* 🔴 Botón de cierre de sesión */}
           <button
             onClick={cerrarSesion}
             style={{
-              marginLeft: "10px",
+              margin: "1rem",
               backgroundColor: "#f44336",
               color: "white",
               border: "none",
-              padding: "5px 10px",
+              padding: "0.5rem 1rem",
               cursor: "pointer"
             }}
           >
-            Cerrar sesión
+            🔒 Cerrar sesión
           </button>
 
-          {/* 👤 Mostrar usuario y rol */}
-          <span style={{ marginLeft: "20px", fontStyle: "italic" }}>
-            Usuario: <strong>{usuarioLogeado.usuario}</strong> ({usuarioLogeado.rol})
-          </span>
-        </nav>
+          <div style={{ marginTop: "auto", padding: "1rem", fontSize: "0.9rem" }}>
+            👤 <strong>{usuarioLogeado.usuario}</strong> ({usuarioLogeado.rol})
+          </div>
+        </div>
       )}
 
-      <Routes>
-        <Route path="/" element={<RutaProtegida><Home /></RutaProtegida>} />
-        <Route path="/inventario" element={<RutaProtegida><Inventario /></RutaProtegida>} />
-        <Route path="/proveedores" element={<RutaProtegida><Proveedores /></RutaProtegida>} />
-        <Route path="/crear-usuario" element={<RutaProtegida soloAdmin={true}><CrearUsuario /></RutaProtegida>} />
-        <Route path="/ver-usuarios" element={<RutaProtegida soloAdmin={true}><VerUsuarios /></RutaProtegida>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<RutaProtegida><Home /></RutaProtegida>} /> {/* fallback */}
-      </Routes>
+      <div className="main">
+        <Routes>
+          <Route path="/" element={<RutaProtegida><Home /></RutaProtegida>} />
+          <Route path="/inventario" element={<RutaProtegida><Inventario /></RutaProtegida>} />
+          <Route path="/proveedores" element={<RutaProtegida><Proveedores /></RutaProtegida>} />
+          <Route path="/crear-usuario" element={<RutaProtegida soloAdmin={true}><CrearUsuario /></RutaProtegida>} />
+          <Route path="/ver-usuarios" element={<RutaProtegida soloAdmin={true}><VerUsuarios /></RutaProtegida>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<RutaProtegida><Home /></RutaProtegida>} />
+        </Routes>
+      </div>
     </div>
   );
 }
